@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>CodePlayer</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js">
+        </script>
+        <script src="jquery-ui/jquery-ui.js"></script>
+        <link rel="stylesheet" href="jquery-ui/jquery-ui.css">
+        <link rel="stylesheet" href="interfaz.css">
+    </head>
+    
+    <body>
+        <div id="barra">
+            <div id="logo">CodePlayer</div>
+            <div id="contenedorBotones">
+                <div class="boton activo" id="html">HTML</div>
+                <div class="boton" id="css">CSS</div>
+                <div class="boton" id="javascript">JavaScript</div>
+                <div class="boton activo" id="output">Output</div>
+            </div>
+        
+        </div>
+        <div id="contenedorBody">
+            <textarea id="htmlPanel" class="panel"><p id="parrafo">Hola a todos!</p></textarea>
+            <textarea id="cssPanel" class="panel oculto">p { color: green; }</textarea>
+            <textarea id="javascriptPanel" class="panel oculto">document.getElementById("parrafo").innerHTML = "Hola Jose Luis!";</textarea>
+
+            <iframe id="outputPanel" class="panel"></iframe>
+        </div>
+        <script type="text/javascript">
+            function actualizarSalida()
+            {
+                 $("iframe").contents().find("html").html("<html><head><style type='text/css'>"+$("#cssPanel").val()+"</style></head><body>"+$("#htmlPanel").val()+"</body></html>");
+                // Lo siguiente ejecuta el javascript en la página original no en el iframe!!!!
+                //eval($("#javascriptPanel").val());
+                document.getElementById("outputPanel").contentWindow.eval($("#javascriptPanel").val());
+            }
+            
+            /*  La funcion hover puede manejar
+                la entrada y salida del puntero a través
+                de dos funciones */
+            $(".boton").hover(function(){
+                $(this).addClass("botonMarcado");
+            },function(){
+                $(this).removeClass("botonMarcado");
+            });
+            
+            // Con toggleClass alternamos una clase
+            $(".boton").click(function(){
+                $(this).toggleClass("activo");
+                $(this).removeClass("botonMarcado");
+                
+                /* 4º Video */
+                var panelId = $(this).attr("id") + "Panel";
+                $("#"+panelId).toggleClass("oculto");
+                //$("#"+panelId).toggle();
+                
+                var numeroDePanelesActivos=4 - $('.oculto').length;
+                $(".panel").width(($(window).width()/numeroDePanelesActivos)-10);
+            });
+            //
+            $(".panel").height($(window).height() -$("#barra").height()-15);
+            $(".panel").width($(window).width()/2 -10);
+            actualizarSalida();
+            
+           $("textarea").on('change keyup paste',function(){
+            actualizarSalida();  
+           }); 
+            
+            
+        </script>
+    </body>
+</html>
